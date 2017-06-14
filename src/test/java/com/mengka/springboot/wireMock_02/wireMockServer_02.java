@@ -17,7 +17,7 @@ import static com.github.tomakehurst.wiremock.client.WireMock.*;
 public class wireMockServer_02 {
 
     @Rule
-    public WireMockRule wireMockRule = new WireMockRule(8089);
+    public WireMockRule wireMockRule = new WireMockRule(8089);//未指定端口时，默认8080
 
     /**
      *  虚拟服务
