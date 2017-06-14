@@ -5,6 +5,8 @@ import com.github.tomakehurst.wiremock.junit.WireMockRule;
 import com.mengka.springboot.model.MengkaApplyRsp;
 import com.mengka.springboot.util.TimeUtil;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.http.client.fluent.Content;
+import org.apache.http.client.fluent.Request;
 import org.junit.Rule;
 import org.junit.Test;
 import java.util.Date;
@@ -42,6 +44,15 @@ public class wireMockServer_01 {
     public void start_api_server()throws Exception{
         log.info("start_api_server start..");
 
+        //启动虚拟服务
+        startApiServer();
+
+        Thread.sleep(100000);
+
+        log.info("start_api_server end..");
+    }
+
+    public void startApiServer(){
         String wireMockResult = getApiServerResult();
 
         stubFor(get(urlMatching("/v1/kv/.*"))
@@ -49,10 +60,6 @@ public class wireMockServer_01 {
                         .withStatus(200)
                         .withHeader("Content-Type", "application/json")
                         .withBody(wireMockResult)));
-
-        Thread.sleep(100000);
-
-        log.info("start_api_server end..");
     }
 
     public String getApiServerResult(){
@@ -60,5 +67,29 @@ public class wireMockServer_01 {
         mengkaApplyRsp.setResult(true);
         mengkaApplyRsp.setMessage("a wireMock result["+ TimeUtil.toDate(new Date(),TimeUtil.FORMAT_YYYY_MM_DD_HH_MM_SS));
         return JSON.toJSONString(mengkaApplyRsp);
+    }
+
+    /**
+     * 使用httpcomponents-client验证虚拟服务：
+     *  https://hc.apache.org/httpcomponents-client-ga/quickstart.html
+     *
+     * @throws Exception
+     */
+    @Test
+    public void verify_api_result()throws Exception{
+        String url = "http://127.0.0.1:8089/v1/kv/a1";
+
+        //启动虚拟服务
+        startApiServer();
+
+        //验证api
+        Content content = Request.Get(url)
+                .execute()
+                .returnContent();
+
+        MengkaApplyRsp mengkaApplyRsp = JSON.parseObject(content.toString(),MengkaApplyRsp.class);
+        log.info("-----mengkaApplyRsp----- message = {}",mengkaApplyRsp.getMessage());
+
+        Thread.sleep(100000);
     }
 }
