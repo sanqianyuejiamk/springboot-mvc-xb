@@ -9,6 +9,8 @@ import org.apache.http.client.fluent.Content;
 import org.apache.http.client.fluent.Request;
 import org.junit.Rule;
 import org.junit.Test;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.client.RestTemplate;
 import java.util.Date;
 import static com.github.tomakehurst.wiremock.client.WireMock.*;
 
@@ -76,7 +78,7 @@ public class wireMockServer_01 {
      * @throws Exception
      */
     @Test
-    public void verify_api_result()throws Exception{
+    public void verify_api_result_apache_httpcomponents()throws Exception{
         String url = "http://127.0.0.1:8089/v1/kv/a1";
 
         //启动虚拟服务
@@ -88,6 +90,29 @@ public class wireMockServer_01 {
                 .returnContent();
 
         MengkaApplyRsp mengkaApplyRsp = JSON.parseObject(content.toString(),MengkaApplyRsp.class);
+        log.info("-----mengkaApplyRsp----- message = {}",mengkaApplyRsp.getMessage());
+
+        Thread.sleep(100000);
+    }
+
+    /**
+     * 使用springweb httpclient验证虚拟服务：
+     *   http://127.0.0.1:8089/v1/kv/a1/hyy044101331
+     *
+     * @throws Exception
+     */
+    @Test
+    public void verify_api_result_springweb_httpclient()throws Exception{
+        String url = "http://127.0.0.1:8089/v1/kv/a1/{id}";
+        String idUriVariables = "hyy044101331";
+
+        //启动虚拟服务
+        startApiServer();
+
+        //验证api
+        ResponseEntity<MengkaApplyRsp> response = new RestTemplate()
+                .getForEntity(url, MengkaApplyRsp.class, idUriVariables);
+        MengkaApplyRsp mengkaApplyRsp = response.getBody();
         log.info("-----mengkaApplyRsp----- message = {}",mengkaApplyRsp.getMessage());
 
         Thread.sleep(100000);
