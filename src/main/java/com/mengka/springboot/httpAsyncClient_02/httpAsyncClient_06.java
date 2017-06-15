@@ -30,11 +30,17 @@ import java.net.UnknownHostException;
  *  》》http连接池：
  *  建立一次http连接三次握手开销很大，http连接池使用已经建立好的http连接，这样花费就很小，吞吐率更大；
  *
+ * 【官方文档】http://hc.apache.org/httpcomponents-client-4.3.x/tutorial/html/connmgmt.html
+ *
  *  》》为什么要用Http连接池：
  *  1）降低延迟：如果不采用连接池，每次连接发起Http请求的时候都会重新建立TCP连接(经历3次握手)，用完就会关闭连接(4次挥手)，
  *  如果采用连接池则减少了这部分时间损耗，别小看这几次握手，本人经过测试发现，基本上3倍的时间延迟；
  *  2）支持更大的并发：如果不采用连接池，每次连接都会打开一个端口，
  *  在大并发的情况下系统的端口资源很快就会被用完，导致无法建立新的连接；
+ *
+ *  》》连接池中连接都是在发起请求的时候建立，并且都是长连接；
+ *
+ *  》》连接池释放连接的时候，并不会直接对TCP连接的状态有任何改变，只是维护了两个Set，leased和avaliabled，leased代表被占用的连接集合，avaliabled代表可用的连接的集合，释放连接的时候仅仅是将连接从leased中remove掉了，并把连接放到avaliabled集合中；
  *
  * @author mengka
  * @date 2017/06/15.
@@ -128,6 +134,7 @@ public class httpAsyncClient_06 {
             };
 
             /**step03*/
+            /*CloseableHttpClient httpClient = HttpClients.createDefault();//如果不采用连接池就是这种方式获取连接*/
             httpclient = HttpClients.custom()
                     .setConnectionManager(cm)
                     .setRetryHandler(httpRequestRetryHandler).build();
@@ -140,7 +147,11 @@ public class httpAsyncClient_06 {
             HttpEntity httpEntity = response.getEntity();
             String responseString = EntityUtils.toString(httpEntity, "UTF-8");
             log.info("response body = {}", responseString);
+
+            //释放连接
+            response.close();
         } finally {
+            //关闭连接
             httpclient.close();
         }
 

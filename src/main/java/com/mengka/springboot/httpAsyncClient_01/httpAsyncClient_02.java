@@ -47,6 +47,7 @@ public class httpAsyncClient_02 {
             String responseString = EntityUtils.toString(httpEntity, "UTF-8");
             log.info("response body = {}", responseString);
         } finally {
+            //关闭连接
             httpclient.close();
         }
     }
