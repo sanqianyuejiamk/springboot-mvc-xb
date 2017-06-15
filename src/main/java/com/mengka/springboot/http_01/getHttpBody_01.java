@@ -1,8 +1,9 @@
 package com.mengka.springboot.http_01;
 
+import com.alibaba.fastjson.JSON;
+import com.mengka.springboot.model.MengkaApplyRsp;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.http.util.CharArrayBuffer;
-
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -20,16 +21,42 @@ public class getHttpBody_01 {
     public static void main(String[] args) throws Exception {
         log.info("getHttpBody_01 start..");
 
+        String path = "http://127.0.0.1:8089/v1/kv/a1";
+
         //step01：启动wireMockServer_01
 
         //step02：获取http body
-        test_get_http_body();
+        test_get_http_body(path);
+
+        MengkaApplyRsp mengkaApplyRsp = get(path,MengkaApplyRsp.class);
+        log.info("mengkaApplyRsp = {}",JSON.toJSONString(mengkaApplyRsp));
 
         log.info("getHttpBody_01 end..");
     }
 
-    public static void test_get_http_body() throws Exception {
-        URL url = new URL("http://127.0.0.1:8089/v1/kv/a1");
+    /**
+     *  获取http对象结果
+     *
+     * @param path
+     * @param clazz
+     * @param <T>
+     * @return
+     * @throws Exception
+     */
+    public static <T> T get(String path,Class<T> clazz)throws Exception{
+        String json = test_get_http_body(path);
+        return JSON.parseObject(json, clazz);
+    }
+
+    /**
+     *  获取http json结果
+     *
+     * @param path
+     * @return
+     * @throws Exception
+     */
+    public static String test_get_http_body(String path) throws Exception {
+        URL url = new URL(path);
         URLConnection con = url.openConnection();
         con.setConnectTimeout(10000);
 
@@ -39,7 +66,8 @@ public class getHttpBody_01 {
         String body = getContent(in, encoding);
         //或
         String body2 = getContent2(in, encoding);
-        System.out.println(body);
+        log.info("test_get_http_body body = {}",body);
+        return body;
     }
 
     public static String getContent(InputStream inputStream, String charset) throws Exception {
