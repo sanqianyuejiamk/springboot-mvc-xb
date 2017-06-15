@@ -2,6 +2,8 @@ package com.mengka.springboot.http_01;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.http.util.CharArrayBuffer;
+
+import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
@@ -29,10 +31,14 @@ public class getHttpBody_01 {
     public static void test_get_http_body() throws Exception {
         URL url = new URL("http://127.0.0.1:8089/v1/kv/a1");
         URLConnection con = url.openConnection();
+        con.setConnectTimeout(10000);
+
         InputStream in = con.getInputStream();
         String encoding = con.getContentEncoding();
         encoding = encoding == null ? "UTF-8" : encoding;
         String body = getContent(in, encoding);
+        //或
+        String body2 = getContent2(in, encoding);
         System.out.println(body);
     }
 
@@ -49,5 +55,18 @@ public class getHttpBody_01 {
             buffer.append(tmp, 0, l);
         }
         return buffer.toString();
+    }
+
+    public static String getContent2(InputStream inputStream, String charset)throws Exception{
+        String temp;
+        String ret="";
+        InputStreamReader isr = new InputStreamReader(inputStream);
+        BufferedReader br = new BufferedReader(isr);
+        while((temp = br.readLine()) != null){
+            ret += temp;
+        }
+        br.close();
+        isr.close();
+        return ret;
     }
 }
