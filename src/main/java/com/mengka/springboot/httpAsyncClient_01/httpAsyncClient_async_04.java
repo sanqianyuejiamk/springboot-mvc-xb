@@ -18,6 +18,7 @@ import java.nio.CharBuffer;
 import java.util.concurrent.CountDownLatch;
 
 /**
+ *  https://hc.apache.org/httpcomponents-asyncclient-4.1.x/quickstart.html
  *
  * @author mengka
  * @date 2017/06/15.
