@@ -91,6 +91,7 @@ public class httpAsyncClient_06 {
                     .build();
             HttpHost httpHost = new HttpHost(hostname, port);
             // http连接管理
+            // 当使用了请求连接池管理器（比如PoolingClientConnectionManager）后，HttpClient就可以同时执行多个线程的请求了
             PoolingHttpClientConnectionManager cm = new PoolingHttpClientConnectionManager(registry);
             cm.setMaxTotal(maxTotal);
             cm.setDefaultMaxPerRoute(maxPerRoute);
