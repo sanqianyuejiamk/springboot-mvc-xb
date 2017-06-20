@@ -35,5 +35,7 @@ public class threadPool_01 {
          */
         long remainingDelay = future.getDelay(TimeUnit.MILLISECONDS);
         log.info("Remaining Delay: {}ms", remainingDelay);
+
+        executor.shutdown();
     }
 }

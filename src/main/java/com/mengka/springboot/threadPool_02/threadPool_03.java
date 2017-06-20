@@ -31,5 +31,7 @@ public class threadPool_03 {
          *  在上一个任务执行完成后1s时间，在执行下一个任务；
          */
         executor.scheduleWithFixedDelay(task, 0, 1, TimeUnit.SECONDS);
+
+        executor.shutdown();
     }
 }

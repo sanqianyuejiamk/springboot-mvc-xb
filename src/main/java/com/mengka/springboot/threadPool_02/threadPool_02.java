@@ -29,5 +29,7 @@ public class threadPool_02 {
         int initialDelay = 0;
         int period = 3;
         executor.scheduleAtFixedRate(task, initialDelay, period, TimeUnit.SECONDS);
+
+        executor.shutdown();
     }
 }
