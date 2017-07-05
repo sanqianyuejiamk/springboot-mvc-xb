@@ -1,7 +1,7 @@
 package com.mengka.springboot.thread_jdk8_01;
 
 /**
- *  jdk8 lambda expressions使用多线程
+ *  jdk8 lambda expressions
  *
  * @author mengka
  * @date 2017/06/20.
