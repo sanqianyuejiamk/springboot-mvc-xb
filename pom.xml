@@ -26,6 +26,8 @@
         <commons.dbcp.version>1.4</commons.dbcp.version>
         <jdbcdslog.version>1.0.6.2</jdbcdslog.version>
         <cglib.version>2.2.2</cglib.version>
+        <hystrix.version>1.5.5</hystrix.version>
+        <hystrix-metrics-event-stream.version>1.5.5</hystrix-metrics-event-stream.version>
     </properties>
     <dependencies>
         <dependency>
@@ -280,6 +282,18 @@
             <groupId>com.sun.jdmk</groupId>
             <artifactId>jmxtools</artifactId>
             <version>1.2.1</version>
+        </dependency>
+
+        <!-- hystrix -->
+        <dependency>
+            <groupId>com.netflix.hystrix</groupId>
+            <artifactId>hystrix-core</artifactId>
+            <version>${hystrix.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.netflix.hystrix</groupId>
+            <artifactId>hystrix-metrics-event-stream</artifactId>
+            <version>${hystrix-metrics-event-stream.version}</version>
         </dependency>
     </dependencies>
     <build>
