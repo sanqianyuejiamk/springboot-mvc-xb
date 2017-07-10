@@ -3,8 +3,6 @@ package com.mengka.springboot.hystrix_03;
 import com.mengka.springboot.util.TimeUtil;
 import com.netflix.hystrix.HystrixCommand;
 import com.netflix.hystrix.HystrixCommandGroupKey;
-import com.netflix.hystrix.HystrixCommandKey;
-import com.netflix.hystrix.HystrixThreadPoolKey;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.Date;
