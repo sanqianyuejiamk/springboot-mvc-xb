@@ -1,9 +1,7 @@
 package com.mengka.springboot.hystrix_02;
 
 import com.mengka.springboot.util.TimeUtil;
-import com.netflix.hystrix.HystrixCommand;
-import com.netflix.hystrix.HystrixCommandGroupKey;
-import com.netflix.hystrix.HystrixCommandProperties;
+import com.netflix.hystrix.*;
 import lombok.extern.slf4j.Slf4j;
 import java.util.Date;
 
@@ -23,6 +21,8 @@ public class HelloWorldCommand extends HystrixCommand<String> {
      */
     public HelloWorldCommand(String name) {
         super(Setter.withGroupKey(HystrixCommandGroupKey.Factory.asKey("HelloWorldGroup"))
+                .andCommandKey(HystrixCommandKey.Factory.asKey("HelloWorldCmd"))
+                .andThreadPoolKey(HystrixThreadPoolKey.Factory.asKey("HelloWorldPool"))
                 .andCommandPropertiesDefaults(HystrixCommandProperties.Setter().withExecutionTimeoutInMilliseconds(500)));
         this.name = name;
     }
@@ -32,7 +32,7 @@ public class HelloWorldCommand extends HystrixCommand<String> {
      * 1）程序抛出非HystrixBadRequestException异常；
      * 2）程序运行超时；
      * 3）熔断启动；
-     * 4）线程池已满；
+     * 4）线程池/信号量已满；
      * 5）限流；
      *
      * @return

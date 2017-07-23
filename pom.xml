@@ -295,6 +295,35 @@
             <artifactId>hystrix-metrics-event-stream</artifactId>
             <version>${hystrix-metrics-event-stream.version}</version>
         </dependency>
+
+        <!-- *** jetty *** -->
+        <dependency>
+            <groupId>org.eclipse.jetty.aggregate</groupId>
+            <artifactId>jetty-all</artifactId>
+            <version>8.1.8.v20121106</version>
+            <type>jar</type>
+            <scope>provided</scope>
+        </dependency>
+        <!-- *************** -->
+
+        <!-- RxJava -->
+        <dependency>
+            <groupId>io.reactivex</groupId>
+            <artifactId>rxjava</artifactId>
+            <version>1.3.0</version>
+        </dependency>
+        <dependency>
+            <groupId>io.reactivex</groupId>
+            <artifactId>rxandroid</artifactId>
+            <version>0.24.0</version>
+        </dependency>
+
+        <!-- bitmap -->
+        <dependency>
+            <groupId>org.roaringbitmap</groupId>
+            <artifactId>RoaringBitmap</artifactId>
+            <version>0.0.1</version>
+        </dependency>
     </dependencies>
     <build>
         <finalName>${project.artifactId}-${project.version}</finalName>
