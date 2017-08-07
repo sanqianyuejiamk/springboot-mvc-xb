@@ -36,6 +36,7 @@ public class scheduler_01 {
         String message2 = "mengka BBB..["+ TimeUtil.toDate(new Date(),TimeUtil.FORMAT_YYYY_MM_DD_HH_MM_SS);
         String message3 = "mengka CCC..["+ TimeUtil.toDate(new Date(),TimeUtil.FORMAT_YYYY_MM_DD_HH_MM_SS);
         String[] words = {message1,message2,message3};
+
         Observable.from(words)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
