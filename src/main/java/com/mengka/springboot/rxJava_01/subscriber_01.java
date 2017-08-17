@@ -10,6 +10,7 @@ import java.util.Date;
  * Subscriber
  * 1）实现了Observer抽象类；
  * 2）Subscriber 对 Observer 接口进行了一些扩展，但他们的基本使用方式是完全一样的；
+ * 3）Observables发出一系列事件，Subscribers处理这些事件；
  *
  * @author mengka
  * @date 2017/07/23.

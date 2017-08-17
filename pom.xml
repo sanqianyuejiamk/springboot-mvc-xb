@@ -315,13 +315,13 @@
         <dependency>
             <groupId>io.reactivex</groupId>
             <artifactId>rxandroid</artifactId>
-            <version>0.24.0</version>
+            <version>0.21.0</version>
         </dependency>
-        <dependency>
-            <groupId>com.google.android</groupId>
-            <artifactId>android</artifactId>
-            <version>4.1.1.4</version>
-        </dependency>
+        <!--<dependency>-->
+            <!--<groupId>com.google.android</groupId>-->
+            <!--<artifactId>android</artifactId>-->
+            <!--<version>4.1.1.4</version>-->
+        <!--</dependency>-->
 
         <!-- bitmap -->
         <dependency>
