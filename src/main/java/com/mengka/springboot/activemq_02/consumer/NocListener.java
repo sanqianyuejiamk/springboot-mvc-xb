@@ -1,14 +1,15 @@
-package com.mengka.springboot.activemq_01.consumer;
+package com.mengka.springboot.activemq_02.consumer;
 
 import com.alibaba.fastjson.JSONObject;
 import lombok.extern.slf4j.Slf4j;
+
 import javax.jms.JMSException;
 import javax.jms.MapMessage;
 import javax.jms.Message;
 import javax.jms.MessageListener;
 
 /**
- *  定义Queue监听器
+ *  定义Topic监听器
  *
  * @author mengka
  * @date 2017/09/20.

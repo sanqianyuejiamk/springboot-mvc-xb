@@ -13,35 +13,31 @@
          http://activemq.apache.org/schema/core
          http://activemq.apache.org/schema/core/activemq-core-5.8.0.xsd">
 
-    <context:property-placeholder location="activemq/jms.properties" ignore-unresolvable="true" />
-
-    <amq:queue id="spittleQueue" physicalName="spittle.alert.queue" />
-
     <!-- send message -->
 
     <!-- 定义JmsTemplate的Topic类型 -->
     <bean id="jmsTopicTemplate" class="org.springframework.jms.core.JmsTemplate">
         <!-- 这个connectionFactory对应的是我们定义的Spring提供的那个ConnectionFactory对象 -->
         <constructor-arg ref="connectionFactory" />
-        <!-- 非pub/sub模型（发布/订阅），即队列模式 -->
-        <property name="pubSubDomain" value="false" />
-        <property name="defaultDestinationName" value="spittle.alert.queue" />
+        <!-- pub/sub模型（发布/订阅） -->
+        <property name="pubSubDomain" value="true" />
+        <property name="defaultDestinationName" value="spittle.alert.topic" />
     </bean>
     <!-- ******** -->
 
 
     <!-- receive message -->
-    <bean id="nocListener" class="com.mengka.springboot.activemq_01.consumer.NocListener"/>
+    <bean id="nocListener" class="com.mengka.springboot.activemq_02.consumer.NocListener"/>
 
     <!-- 定义Queue监听器 -->
-    <jms:listener-container client-id="cabbage-pro1" connection-factory="connectionFactory" destination-type="queue" container-type="default" acknowledge="auto">
-        <jms:listener subscription="cabbage-pro1" destination="spittle.alert.queue" ref="nocListener" method="onMessage"/>
+    <jms:listener-container client-id="cabbage-pro2" connection-factory="connectionFactory" destination-type="topic" container-type="default" acknowledge="auto">
+        <jms:listener subscription="cabbage-pro2" destination="spittle.alert.topic" ref="nocListener" method="onMessage"/>
     </jms:listener-container>
     <!-- ******** -->
 
 
     <!-- ActiveMQ 连接工厂 -->
-    <amq:connectionFactory id="amqConnectionFactory" clientID="cabbage-pro1" brokerURL="tcp://localhost:61616" />
+    <amq:connectionFactory id="amqConnectionFactory" clientID="cabbage-pro2" brokerURL="tcp://localhost:61616" />
 
     <!-- Spring Caching连接工厂 -->
     <!-- Spring用于管理真正的ConnectionFactory的ConnectionFactory -->

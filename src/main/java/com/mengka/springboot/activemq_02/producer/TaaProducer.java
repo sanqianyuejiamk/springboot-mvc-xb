@@ -1,4 +1,4 @@
-package com.mengka.springboot.activemq_01.producer;
+package com.mengka.springboot.activemq_02.producer;
 
 import com.mengka.springboot.util.TimeUtil;
 import lombok.extern.slf4j.Slf4j;
@@ -6,6 +6,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.jms.core.JmsTemplate;
 import org.springframework.jms.core.MessageCreator;
+
 import javax.jms.JMSException;
 import javax.jms.MapMessage;
 import javax.jms.Message;
@@ -13,9 +14,9 @@ import javax.jms.Session;
 import java.util.Date;
 
 /**
- *  点对点queue 一个生产者发送的消息只能有一个消费者接受
+ *  订阅 topic 一个生产者发送的消息有多个消费者接受
  *
- *  点对点（point-to-point，简称PTP）Queue消息传递模型
+ *  发布/订阅（publish/subscribe，简称pub/sub）Topic消息传递模型
  *
  * @author mengka
  * @date 2017/09/20.
@@ -26,7 +27,7 @@ public class TaaProducer {
     public static void main(String[] args) throws Exception {
         log.info("----------------, activemq_01 TaaProducer test....");
 
-        String serviceConfigXMLs[] = new String[]{"activemq/activemq-context.xml"};
+        String serviceConfigXMLs[] = new String[]{"activemq_02/activemq-context.xml"};
         ApplicationContext context = new ClassPathXmlApplicationContext(serviceConfigXMLs);
 
         JmsTemplate jmsTemplate = (JmsTemplate) context.getBean("jmsTopicTemplate");
