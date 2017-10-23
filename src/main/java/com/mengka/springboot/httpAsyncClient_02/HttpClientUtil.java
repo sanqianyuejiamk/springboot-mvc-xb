@@ -1,8 +1,6 @@
 package com.mengka.springboot.httpAsyncClient_02;
 
-import java.io.IOException;
-import java.io.InterruptedIOException;
-import java.io.UnsupportedEncodingException;
+import java.io.*;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.List;
@@ -13,6 +11,8 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import javax.net.ssl.SSLException;
 import javax.net.ssl.SSLHandshakeException;
+
+import org.apache.commons.lang.StringUtils;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpEntityEnclosingRequest;
 import org.apache.http.HttpHost;
@@ -40,6 +40,7 @@ import org.apache.http.impl.client.HttpClients;
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.protocol.HttpContext;
+import org.apache.http.util.CharArrayBuffer;
 import org.apache.http.util.EntityUtils;
 
 
@@ -182,6 +183,39 @@ public class HttpClientUtil {
         }
     }
 
+    private static String setGetParams(String url, Map<String, Object> params) {
+        List<NameValuePair> nvps = new ArrayList<NameValuePair>();
+        Set<String> keySet = params.keySet();
+        for (String key : keySet) {
+            nvps.add(new BasicNameValuePair(key, params.get(key).toString()));
+        }
+        try {
+            UrlEncodedFormEntity encodedFormEntity = new UrlEncodedFormEntity(nvps, "UTF-8");
+            String queryString = getContent(encodedFormEntity, "UTF-8");
+            if(StringUtils.isNotBlank(queryString)) {
+                url = url + "?" + queryString;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return url;
+    }
+
+    public static String getContent(HttpEntity entity, String charset) throws Exception {
+        int i = (int) entity.getContentLength();
+        if (i < 0) {
+            i = 4096;
+        }
+        final Reader reader = new InputStreamReader(entity.getContent(), charset);
+        final CharArrayBuffer buffer = new CharArrayBuffer(i);
+        final char[] tmp = new char[1024];
+        int l;
+        while ((l = reader.read(tmp)) != -1) {
+            buffer.append(tmp, 0, l);
+        }
+        return buffer.toString();
+    }
+
     /**
      * GET请求URL获取内容
      *
@@ -214,6 +248,11 @@ public class HttpClientUtil {
                 e.printStackTrace();
             }
         }
+    }
+
+    public static String get(String url, Map<String, Object> params) {
+        url = setGetParams(url,params);
+        return get(url);
     }
 
     /**

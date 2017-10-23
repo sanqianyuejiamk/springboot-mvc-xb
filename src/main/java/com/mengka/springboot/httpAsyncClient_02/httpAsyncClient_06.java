@@ -81,6 +81,7 @@ public class httpAsyncClient_06 {
             request1.setHeader(HttpHeaders.USER_AGENT, "mengka test agent");
             request1.setConfig(requestConfig);
 
+
             /**step02*/
             ConnectionSocketFactory plainsf = PlainConnectionSocketFactory.getSocketFactory();
             LayeredConnectionSocketFactory sslsf = SSLConnectionSocketFactory.getSocketFactory();

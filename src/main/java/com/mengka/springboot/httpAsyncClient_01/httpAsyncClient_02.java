@@ -1,5 +1,6 @@
 package com.mengka.springboot.httpAsyncClient_01;
 
+import com.mengka.springboot.httpAsyncClient_02.HttpClientUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -67,25 +68,12 @@ public class httpAsyncClient_02 {
 
             //get http response body
             HttpEntity httpEntity = response1.getEntity();
-            String responseString = getContent(httpEntity, "UTF-8");
+            String responseString = HttpClientUtil.getContent(httpEntity, "UTF-8");
             log.info("response body = {}", responseString);
         } finally {
             httpclient.close();
         }
     }
 
-    public static String getContent(HttpEntity entity, String charset) throws Exception {
-        int i = (int) entity.getContentLength();
-        if (i < 0) {
-            i = 4096;
-        }
-        final Reader reader = new InputStreamReader(entity.getContent(), charset);
-        final CharArrayBuffer buffer = new CharArrayBuffer(i);
-        final char[] tmp = new char[1024];
-        int l;
-        while ((l = reader.read(tmp)) != -1) {
-            buffer.append(tmp, 0, l);
-        }
-        return buffer.toString();
-    }
+
 }

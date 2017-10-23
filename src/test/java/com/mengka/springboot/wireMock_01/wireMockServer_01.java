@@ -49,7 +49,7 @@ public class wireMockServer_01 {
         //启动虚拟服务
         startApiServer();
 
-        Thread.sleep(600000);
+        Thread.sleep(6000000);
 
         log.info("start_api_server end..");
     }

@@ -2,6 +2,9 @@ package com.mengka.springboot.httpAsyncClient_02;
 
 import lombok.extern.slf4j.Slf4j;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * http连接池调优：
  * 1. 连接数，通过设立全局最大连接数和单route连接数，增加吞吐能力。用户可通过HttpClientBuilder#maxConnTotal和#maxConnPerRoute分别设置；
@@ -15,12 +18,18 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class httpAsyncClient_05 {
 
-    public static void main(String[] args){
+    public static void main(String[] args)throws Exception{
         log.info("httpAsyncClient_05 start..");
 
         String getUrl = "http://127.0.0.1:8089/v1/kv/a1";
         String content1 = HttpClientUtil.get(getUrl);
         log.info("HttpClientUtil get content = {}",content1);
+
+        Map<String, Object> params = new HashMap<String, Object>();
+        params.put("t","11");
+        params.put("name","啊啊");
+        String content2 = HttpClientUtil.get(getUrl,params);
+        log.info("HttpClientUtil post content2 = {}",content2);
 
         log.info("httpAsyncClient_05 end..");
     }
