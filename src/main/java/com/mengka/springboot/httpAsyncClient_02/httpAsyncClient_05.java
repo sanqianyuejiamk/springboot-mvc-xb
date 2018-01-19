@@ -31,6 +31,9 @@ public class httpAsyncClient_05 {
         String content2 = HttpClientUtil.get(getUrl,params);
         log.info("HttpClientUtil post content2 = {}",content2);
 
+//        String content3 = HttpClientUtil.post(getUrl,params);
+//        log.info("HttpClientUtil post content3 = {}",content3);
+
         log.info("httpAsyncClient_05 end..");
     }
 }

@@ -18,14 +18,14 @@
     <bean id="nocListener" class="com.mengka.springboot.activemq_03.NocListener"/>
 
     <!-- 定义Queue监听器 -->
-    <jms:listener-container client-id="cabbage-pro-listener2" connection-factory="connectionFactory" destination-type="durableTopic" container-type="default" acknowledge="auto">
-        <jms:listener subscription="cabbage-pro-listener2" destination="noc_msg" ref="nocListener" method="onMessage"/>
+    <jms:listener-container client-id="cabbage-pro-listener3" connection-factory="connectionFactory" destination-type="durableTopic" container-type="default" acknowledge="auto">
+        <jms:listener subscription="cabbage-pro-listener3" destination="noc_msg2" ref="nocListener" method="onMessage"/>
     </jms:listener-container>
     <!-- ******** -->
 
     <!-- ActiveMQ 连接工厂 -->
-    <amq:connectionFactory id="amqConnectionFactory" clientID="cabbage-pro-listener2" brokerURL="tcp://192.168.10.219:61616"
-                           userName="cabbage" password="cabbage@innotek"/>
+    <amq:connectionFactory id="amqConnectionFactory" clientID="cabbage-pro-listener3" brokerURL="tcp://127.0.0.1:61616"
+                           />
 
     <!-- Spring Caching连接工厂 -->
     <!-- Spring用于管理真正的ConnectionFactory的ConnectionFactory -->
