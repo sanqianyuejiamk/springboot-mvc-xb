@@ -66,6 +66,6 @@ public class httpAsyncClient_async_03 {
         } finally {
             httpclient.close();
         }
-        log.info("httpAsyncClient_async_03 start..");
+        log.info("httpAsyncClient_async_03 end..");
     }
 }
