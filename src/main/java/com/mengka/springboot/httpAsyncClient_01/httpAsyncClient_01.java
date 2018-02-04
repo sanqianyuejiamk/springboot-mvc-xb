@@ -36,20 +36,22 @@ public class httpAsyncClient_01 {
             httpclient.start();
 
             // Execute request
+            log.info("--------，start CloseableHttpAsyncClient response1..");
             final HttpGet request1 = new HttpGet("http://www.apache.org/");
             Future<HttpResponse> future = httpclient.execute(request1, null);
             // and wait until a response is received
             HttpResponse response1 = future.get();
-            System.out.println(request1.getRequestLine() + "->" + response1.getStatusLine());
+            System.out.println("--------，1 = "+request1.getRequestLine() + "->" + response1.getStatusLine());
 
             // One most likely would want to use a callback for operation result
+            log.info("--------，start CloseableHttpAsyncClient response2..");
             final CountDownLatch latch1 = new CountDownLatch(1);
             final HttpGet request2 = new HttpGet("http://www.apache.org/");
             httpclient.execute(request2, new FutureCallback<HttpResponse>() {
 
                 public void completed(final HttpResponse response2) {
                     latch1.countDown();
-                    System.out.println(request2.getRequestLine() + "->" + response2.getStatusLine());
+                    System.out.println("--------，2 = "+request2.getRequestLine() + "->" + response2.getStatusLine());
 
                     //get http response body
                     try {
@@ -76,6 +78,7 @@ public class httpAsyncClient_01 {
 
             // In real world one most likely would also want to stream
             // request and response body content
+            log.info("--------，start CloseableHttpAsyncClient response2..");
             final CountDownLatch latch2 = new CountDownLatch(1);
             final HttpGet request3 = new HttpGet("http://www.apache.org/");
             HttpAsyncRequestProducer producer3 = HttpAsyncMethods.create(request3);
