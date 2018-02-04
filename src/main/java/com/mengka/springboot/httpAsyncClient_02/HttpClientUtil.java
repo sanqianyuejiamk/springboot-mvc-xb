@@ -45,12 +45,67 @@ import org.apache.http.util.EntityUtils;
 
 
 /**
+ * HTTP连接池
+ * 1）在 keep-alive 时间内，可以使用同一个 tcp 连接发起多次 http 请求;
+ * 2）如果不使用连接池，在大并发的情况下，每次连接都会打开一个端口，使系统资源很快耗尽，无法建立新的连接;
+ * <p>
+ * <p>
+ * 》》httpClient 维护着两个 Set，leased(被占用的连接集合) 和 avaliabled(可用的连接集合) 两个集合，
+ * 释放连接就是将被占用连接放到可用连接里面；
+ * <p>
+ * HTTP1.1 默认启用 Keep-Alive
+ * 在一次连接里面，可以发起多个 http 请求。如果没有 Keep-Alive，每次 http 请求都要发起一次 tcp 连接。
+ * <p>
+ * <p>
+ * 》》keep-alive设置：(Response Headers)
+ * 1）Connection:Keep-Alive
+ * 2）Keep-Alive:timeout=5,max=100
+ * <p>
+ * Connection:Keep-Alive,设置http连接为长连接；
+ * timeout=5,表示在5s之内如果没有发起新的http请求，服务器将断开这次tcp连接；（如果发起新的请求，断开连接时间将继续刷新为 5s）
+ * max=100,表示在这次的tcp连接之内，最多允许发送100次http请求，100次之后，即使在timeouts时间之内发起的请求，服务器依然会断开这次tcp连接；
+ * <p>
+ * <p>
+ * 》》超时时间设置：
+ * connectTimeout 请求超时时间；
+ * socketTimeout 等待数据超时时间；
+ * connectionRequestTimeout 连接不够用时等待超时时间，一定要设置，如果不设置的话，如果连接池连接不够用，就会线程阻塞；
+ * <p>
+ * RequestConfig requestConfig = RequestConfig.custom()
+ * .setConnectTimeout(3 * 1000)    // 请求超时时间
+ * .setSocketTimeout(60 * 1000)    // 等待数据超时时间
+ * .setConnectionRequestTimeout(500)  // 连接超时时间
+ * .build();
+ * <p>
+ * <p>
+ * 》》连接池设置：
+ * int maxTotal = 200;// 将最大连接数增加
+ * int maxPerRoute = 40;// 将每个路由基础的连接增加
+ * int maxRoute = 100; // 将目标主机的最大连接数增加
+ * <p>
+ * httpClient = createHttpClient(maxTotal, maxPerRoute, maxRoute, hostname, port);
+ * <p>
+ * maxTotal，整个连接池最大连接数 根据自己的场景决定；
+ * maxRoute，路由个数，是根据连接到的主机对MaxTotal的一个细分；
+ * maxPerRoute，每个路由的最大连接数（如果只有一个路由，可以让他等于最大值）；
+ * <p>
+ * 》路由是对maxTotal的细分；
+ * <p>
+ * 》》情况一：
+ * 如果没有释放连接，导致连接池内连接不够用，并且因为我没有设置连接不够用等待超时时间(connectionRequestTimeout)，一直等待导致线程阻塞。
+ *
  * @author mengka
  * @date 2017/06/15.
  */
 public class HttpClientUtil {
 
-    static final int timeOut = 10 * 1000;
+    private static final int CONNECT_TIMEOUT = 3 * 1000;//请求超时时间
+    private static final int SOCKET_TIMEOUT = 60 * 1000;//等待数据超时时间
+    private static final int CONNECT_REQUEST_TIMEOUT = 500;//连接超时时间
+
+    private static final int maxTotal = 200;// 将最大连接数增加
+    private static final int maxPerRoute = 40;// 将每个路由基础的连接增加
+    private static final int maxRoute = 100; // 将目标主机的最大连接数增加
 
     private static CloseableHttpClient httpClient = null;
 
@@ -69,8 +124,10 @@ public class HttpClientUtil {
 
         // 配置请求的超时设置
         RequestConfig requestConfig = RequestConfig.custom()
-                .setConnectionRequestTimeout(timeOut)
-                .setConnectTimeout(timeOut).setSocketTimeout(timeOut).build();
+                .setConnectionRequestTimeout(CONNECT_REQUEST_TIMEOUT)//连接超时时间
+                .setConnectTimeout(CONNECT_TIMEOUT)//请求超时时间
+                .setSocketTimeout(SOCKET_TIMEOUT)//等待数据超时时间
+                .build();
         httpRequestBase.setConfig(requestConfig);
     }
 
@@ -92,7 +149,7 @@ public class HttpClientUtil {
         if (httpClient == null) {
             synchronized (syncLock) {
                 if (httpClient == null) {
-                    httpClient = createHttpClient(200, 40, 100, hostname, port);
+                    httpClient = createHttpClient(maxTotal, maxPerRoute, maxRoute, hostname, port);
                 }
             }
         }
@@ -108,15 +165,13 @@ public class HttpClientUtil {
      */
     public static CloseableHttpClient createHttpClient(int maxTotal,
                                                        int maxPerRoute, int maxRoute, String hostname, int port) {
-        ConnectionSocketFactory plainsf = PlainConnectionSocketFactory
-                .getSocketFactory();
-        LayeredConnectionSocketFactory sslsf = SSLConnectionSocketFactory
-                .getSocketFactory();
+        ConnectionSocketFactory plainsf = PlainConnectionSocketFactory.getSocketFactory();
+        LayeredConnectionSocketFactory sslsf = SSLConnectionSocketFactory.getSocketFactory();
         Registry<ConnectionSocketFactory> registry = RegistryBuilder
-                .<ConnectionSocketFactory>create().register("http", plainsf)
+                .<ConnectionSocketFactory>create()
+                .register("http", plainsf)
                 .register("https", sslsf).build();
-        PoolingHttpClientConnectionManager cm = new PoolingHttpClientConnectionManager(
-                registry);
+        PoolingHttpClientConnectionManager cm = new PoolingHttpClientConnectionManager(registry);
         // 将最大连接数增加
         cm.setMaxTotal(maxTotal);
         // 将每个路由基础的连接增加
@@ -192,7 +247,7 @@ public class HttpClientUtil {
         try {
             UrlEncodedFormEntity encodedFormEntity = new UrlEncodedFormEntity(nvps, "UTF-8");
             String queryString = getContent(encodedFormEntity, "UTF-8");
-            if(StringUtils.isNotBlank(queryString)) {
+            if (StringUtils.isNotBlank(queryString)) {
                 url = url + "?" + queryString;
             }
         } catch (Exception e) {
@@ -251,7 +306,7 @@ public class HttpClientUtil {
     }
 
     public static String get(String url, Map<String, Object> params) {
-        url = setGetParams(url,params);
+        url = setGetParams(url, params);
         return get(url);
     }
 
